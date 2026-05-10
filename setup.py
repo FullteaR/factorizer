@@ -2,8 +2,8 @@ from setuptools import setup, Extension, find_packages
 import os
 import glob
 
-sources = [] 
-sources += glob.glob("src/*.cpp")
+sources = []
+sources += [f for f in glob.glob("src/*.cpp") if os.path.basename(f) != "factorizer.cpp"]
 sources += glob.glob("src/*.pyx")
 
 root_dir = os.path.abspath(os.path.dirname(__file__))

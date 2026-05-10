@@ -75,11 +75,6 @@ Bint jacobi_symbol(Bint const& a, Bint const& p){
 }
 
 
-Bint quadratic_residue(Bint const& a, Bint const& p){
-    // returns x s.t. x^2 ≡ a (mod p)
-    
-}
-
 //return first(smallest) prime p s.t. p>=n
 Bint next_prime(Bint const& n){
     if(n<=2){
