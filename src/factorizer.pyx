@@ -2,7 +2,6 @@ from libcpp.string cimport string
 import requests
 from requests.exceptions import Timeout as requestsTimeoutError
 import threading
-import time
 
 
 class TimeOutError(Exception):
@@ -31,15 +30,9 @@ class BaseClass:
         args = (str(n).encode(),)+args
         thread_factorize = threading.Thread(target=self.factorize_wrap, args=args, kwargs=kwargs, name="_factorize", daemon=True)
         thread_factorize.start()
-        if self.timeout is not None:
-            for i in range(self.timeout*100):
-                if thread_factorize.is_alive() == False:
-                    break
-                time.sleep(0.01)
-            else:
-                raise TimeOutError
-        else:
-            thread_factorize.join()
+        thread_factorize.join(timeout=self.timeout)
+        if thread_factorize.is_alive():
+            raise TimeOutError
 
 
         d = self.result[str(n).encode()]

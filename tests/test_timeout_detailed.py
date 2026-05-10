@@ -47,7 +47,7 @@ def test_float_timeout_fires():
 def test_timeout_zero_raises_immediately():
     divider = BruteForceFactorizer(timeout=0)
     with pytest.raises(TimeOutError):
-        divider.factorize(EASY_N)
+        divider.factorize(HARD_N)
 
 
 # ---------------------------------------------------------------------------
