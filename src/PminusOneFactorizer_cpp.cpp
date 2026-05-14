@@ -2,14 +2,7 @@
 
 #include <boost/multiprecision/cpp_int.hpp>
 #include <boost/multiprecision/integer.hpp>
-#include <vector>
-#include <cmath>
-#include <iostream>
 using Bint = boost::multiprecision::cpp_int;
-
-//return f s.t. q^f<M<=q^(f+1)
-unsigned long get_f(unsigned long q, unsigned long M);
-std::vector<unsigned long> generate_primes(unsigned long MAX);
 
 std::string PminusOneFactorizer_step1_cppfunc(std::string s, unsigned long M){
     Bint n(s);
@@ -47,36 +40,4 @@ std::string PminusOneFactorizer_step2_cppfunc(std::string s, unsigned long M, un
         }
     }
     return "1";
-}
-
-
-unsigned long get_f(unsigned long q, unsigned long M){
-    unsigned long f = log(M)/log(q);
-    if(pow(q,f)==M){
-        return f-1;
-    }
-    else{
-        assert(pow(q,f)<M and M<=pow(q,f+1));
-        return f;
-    }
-}
-
-std::vector<unsigned long> generate_primes(unsigned long MAX){ // we have to make this more smart...
-    std::vector<bool> v(MAX+1, true);
-    v.at(0) = false;
-    v.at(1) = false;
-    std::vector<unsigned long> retval;
-    retval.clear();
-    unsigned long sqrt_MAX = (unsigned long)sqrt(MAX);
-    for(unsigned long i=2;i<=MAX;i++){
-        if(!v.at(i)){
-            continue;
-        }   
-        retval.push_back(i);
-        if(i>sqrt_MAX+1){continue;}
-        for(unsigned long k=2;k*i<=MAX;k++){
-            v.at(k*i) = false;
-        }
-    }
-    return retval;
 }

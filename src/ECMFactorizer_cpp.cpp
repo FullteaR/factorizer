@@ -7,6 +7,7 @@
 #include <cmath>
 #include <algorithm>
 #include <map>
+#include <random>
 
 using Bint = boost::multiprecision::cpp_int;
 
@@ -114,22 +115,9 @@ static Point ec_mul(Point P, Bint k, Bint const& a, Bint const& n) {
     return result;
 }
 
-static std::vector<unsigned long> sieve_primes(unsigned long MAX) {
-    if (MAX < 2) return {};
-    std::vector<bool> v(MAX + 1, true);
-    v[0] = v[1] = false;
-    unsigned long sq = (unsigned long)std::sqrt((double)MAX);
-    std::vector<unsigned long> primes;
-    for (unsigned long i = 2; i <= MAX; i++) {
-        if (!v[i]) continue;
-        primes.push_back(i);
-        if (i <= sq) {
-            for (unsigned long j = i * i; j <= MAX; j += i) {
-                v[j] = false;
-            }
-        }
-    }
-    return primes;
+static bool is_singular(Bint const& a, Bint const& b, Bint const& n) {
+    Bint disc = modn(Bint(4) * a * a * a + Bint(27) * b * b, n);
+    return gcd(disc, n) == n;
 }
 
 } // namespace ecm
@@ -139,21 +127,26 @@ std::string ECMFactorizer_cppfunc(std::string s, unsigned long B1, unsigned long
     using namespace ecm;
     Bint n(s);
 
+    std::random_device rd;
+    boost::mt19937 base_gen(rd());
     using engine_type = boost::random::independent_bits_engine<boost::mt19937, 1024, Bint>;
-    engine_type gen;
+    engine_type gen(base_gen);
 
-    std::vector<unsigned long> primes = sieve_primes(B2);
+    std::vector<unsigned long> primes = generate_primes(B2);
 
     for (unsigned long curve = 0; curve < max_curves; curve++) {
         Bint x0 = modn(gen(), n);
         Bint y0 = modn(gen(), n);
         Bint a = modn(gen(), n);
+        // b = y0^2 - x0^3 - a*x0 (mod n)
+        Bint b = modn(y0 * y0 - x0 * x0 * x0 - a * x0, n);
+
+        if (is_singular(a, b, n)) continue;
 
         Point P = {x0, y0, ONE};
 
         // Stage 1: multiply P by each prime power up to B1
         bool overshot = false;
-        bool found = false;
         for (size_t i = 0; i < primes.size() && primes[i] <= B1; i++) {
             unsigned long p = primes[i];
             unsigned long pp = p;
