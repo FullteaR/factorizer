@@ -90,6 +90,36 @@ def test_ng_both_big_timeout():
         facts = divider.factorize(n)
 
 
+def test_ok_max_iter_sufficient():
+    divider = Factorizer(max_iter=10000)
+    facts = divider.factorize(57)
+    assert facts == (3, 19)
+
+
+def test_ok_max_iter_none():
+    divider = Factorizer(max_iter=None)
+    facts = divider.factorize(57)
+    assert facts == (3, 19)
+
+
+def test_ng_max_iter_zero():
+    # max_iter=0: no steps taken, returns (1, n) for any non-trivial composite
+    divider = Factorizer(max_iter=0)
+    n = 3 * 9999991
+    d, q = divider.factorize(n)
+    assert d * q == n
+    assert d == 1
+
+
+def test_ng_max_iter_too_small():
+    # factors are far apart, Fermat needs many steps
+    divider = Factorizer(max_iter=1)
+    n = 3 * 9999991
+    d, q = divider.factorize(n)
+    assert d * q == n
+    assert d == 1
+
+
 def test_ok_both_very_big():
     divider = Factorizer(timeout=5)
     n = 17094896531810236860130284769490321915294047711310368136394905170386978916759334950349117125605720936295486193376534502996558346954298821541237678202872064373159864453975455700275218336138295073109837853052911442982249175483147894454735060228013876333548456070708161754022653432247114865681934678336369669630310417775703125135381535339600363990582556226874678712573925886711666498382111760727570796847908646797570295191362260110871270300928038772025787352463090061558150045455638071691578922379413464004696514186854056461649591756647526422083918100655183395966280798720122926503397649310956601613684952853243575941193

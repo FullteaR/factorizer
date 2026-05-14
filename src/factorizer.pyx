@@ -65,14 +65,17 @@ class BruteForceFactorizer(BaseClass):
 
 class FermatFactorizer(BaseClass):
 
-    def __init__(self, timeout=None):
+    def __init__(self, max_iter=None, timeout=None):
         super().__init__(timeout)
+        self.max_iter = max_iter
 
     def _factorize(self, string n, *args, **kwargs):
         cdef:
             string d
+            long long max_iter
+        max_iter = self.max_iter if self.max_iter is not None else -1
         with nogil:
-            d = FermatFactorizer_cppfunc(n)
+            d = FermatFactorizer_cppfunc(n, max_iter)
         return d
 
 
@@ -138,6 +141,26 @@ class RSAPrivateKeyFactorizer(BaseClass):
             p = RSAPrivateKeyFactorizer_cppfunc(n, d, e)
         return p
 
+
+
+class PplusOneFactorizer(BaseClass):
+
+    def __init__(self, A=3, timeout=None):
+        super().__init__(timeout)
+        self.A = A
+
+    def factorize(self, n, M=100000, *args, **kwargs):
+        assert M < ULONG_MAX
+        return super().factorize(n, M, *args, **kwargs)
+
+    def _factorize(self, string n, unsigned long M, *args, **kwargs):
+        cdef:
+            string d
+            unsigned long A
+        A = self.A
+        with nogil:
+            d = PplusOneFactorizer_step1_cppfunc(n, M, A)
+        return d
 
 
 class FactorDBFactorizer(BaseClass):

@@ -9,7 +9,7 @@ cdef extern from "BruteForceFactorizer_cpp.hpp":
     string BruteForceFactorizer_cppfunc(string s) nogil
 
 cdef extern from "FermatFactorizer_cpp.hpp":
-    string FermatFactorizer_cppfunc(string s) nogil
+    string FermatFactorizer_cppfunc(string s, long long max_iter) nogil
 
 cdef extern from "PollardsRhoFactorizer_cpp.hpp":
     string PollardsRhoFactorizer_cppfunc(string s, long c) nogil
@@ -22,3 +22,6 @@ cdef extern from "PminusOneFactorizer_cpp.hpp":
 
 cdef extern from "RSAPrivateKeyFactorizer_cpp.hpp":
     string RSAPrivateKeyFactorizer_cppfunc(string s, string d, string e) nogil
+
+cdef extern from "PplusOneFactorizer_cpp.hpp":
+    string PplusOneFactorizer_step1_cppfunc(string s, unsigned long M, unsigned long A) nogil

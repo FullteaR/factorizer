@@ -5,6 +5,7 @@
 #include <boost/multiprecision/miller_rabin.hpp>
 #include <cmath>
 #include <cassert>
+#include <vector>
 
 using Bint = boost::multiprecision::cpp_int;
 
@@ -74,6 +75,36 @@ Bint jacobi_symbol(Bint const& a, Bint const& p){
     return _jacobi_symbol(a%p, p);
 }
 
+
+unsigned long get_f(unsigned long q, unsigned long M){
+    unsigned long f = log(M)/log(q);
+    if(pow(q,f)==M){
+        return f-1;
+    }
+    else{
+        assert(pow(q,f)<M and M<=pow(q,f+1));
+        return f;
+    }
+}
+
+std::vector<unsigned long> generate_primes(unsigned long MAX){
+    std::vector<bool> v(MAX+1, true);
+    v.at(0) = false;
+    v.at(1) = false;
+    std::vector<unsigned long> retval;
+    unsigned long sqrt_MAX = (unsigned long)sqrt(MAX);
+    for(unsigned long i=2;i<=MAX;i++){
+        if(!v.at(i)){
+            continue;
+        }
+        retval.push_back(i);
+        if(i>sqrt_MAX+1){continue;}
+        for(unsigned long k=2;k*i<=MAX;k++){
+            v.at(k*i) = false;
+        }
+    }
+    return retval;
+}
 
 //return first(smallest) prime p s.t. p>=n
 Bint next_prime(Bint const& n){
