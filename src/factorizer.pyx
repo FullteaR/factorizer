@@ -140,6 +140,25 @@ class RSAPrivateKeyFactorizer(BaseClass):
 
 
 
+class ECMFactorizer(BaseClass):
+
+    def __init__(self, timeout=None):
+        super().__init__(timeout)
+
+    def factorize(self, n, B1=10000, B2=100000, max_curves=100, *args, **kwargs):
+        assert B1 >= 2
+        assert B2 >= B1
+        assert max_curves >= 1
+        return super().factorize(n, B1, B2, max_curves, *args, **kwargs)
+
+    def _factorize(self, string n, unsigned long B1, unsigned long B2, unsigned long max_curves, *args, **kwargs):
+        cdef:
+            string d
+        with nogil:
+            d = ECMFactorizer_cppfunc(n, B1, B2, max_curves)
+        return d
+
+
 class FactorDBFactorizer(BaseClass):
     
     def __init__(self, timeout=None):

@@ -22,3 +22,6 @@ cdef extern from "PminusOneFactorizer_cpp.hpp":
 
 cdef extern from "RSAPrivateKeyFactorizer_cpp.hpp":
     string RSAPrivateKeyFactorizer_cppfunc(string s, string d, string e) nogil
+
+cdef extern from "ECMFactorizer_cpp.hpp":
+    string ECMFactorizer_cppfunc(string s, unsigned long B1, unsigned long B2, unsigned long max_curves) nogil
